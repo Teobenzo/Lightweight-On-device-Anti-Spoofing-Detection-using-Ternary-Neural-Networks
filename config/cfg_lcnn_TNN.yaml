@@ -1,0 +1,132 @@
+
+# -----------------------------------------------------------------------------------------------
+batch_size: 16
+num_epochs: 150
+early_stopping: 150
+lr: 0.001
+min_lr: 0.0001
+trim: True
+
+num_workers: 10
+
+label_bonafide: 0
+label_spoof: 1
+
+feature: 'mel_spec'
+
+# SPARSE SETTINGS
+enable_sparse: true
+sparse_format: 'coo'  # 'csr', 'coo'
+sparse_min_sparsity: 0.8 # Min sparsity value to apply sparse format
+# if sparse_convert_1x1_and_linear_only = false, sparse_force_convert_3x3 has no effect
+sparse_convert_1x1_and_linear_only: false # true: convert only conv layer with 1x1 kernels; false: convert all conv layers
+sparse_force_convert_3x3: false # true: force the conversion of 3x3-kernel's conv layers
+
+
+# DATASETS
+# there is only a need for them to exist, the actual datasets used are specified in the evaluation script
+asvspoof2019: False
+asvspoof2021_LA: False
+asvspoof2021_DF: False
+FakeOrReal: False
+Purdue: False
+InTheWild: False
+TimitTts: False
+llj+libri_real_only: False
+llj_real_only: False
+libri_real_only: False
+
+# PERTURBATIONS
+# there is only a need for them to exist, the actual perturbations applied are specified in the evaluation script
+apply_mulaw: False
+apply_G722: False
+apply_RIR: False
+apply_noise_Inj_10db: False
+apply_noise_Inj_20db: False
+apply_opus: False
+apply_vorbis: False
+apply_env_noise_20db_SNR: False
+apply_env_noise_15db_SNR: False
+apply_white_noise_20db_SNR: False
+apply_white_noise_10db_SNR: False
+
+
+# Model name template
+model_date_4eval: '25 October' # Ex: 07 July
+# mel-spec model
+model_file_template: "TNN_LCNN_{feature}_{dataset_name}_{win_len}SEC_fs_{fs}_trim_{trim}_lr{lr}_minlr{min_lr}_delta{delta_min}-{delta_max}-{delta_epoch}_regime-{delta_regime}_f32act-{f32_act}_fullfc-{full_fc}_wd-{weight_decay}_{date}.pth"
+# sinc-conv model
+model_file_template_sinc_conv: "TNN_LCNN_{feature}_{dataset_name}_{win_len}SEC_fs_{fs}_trim_{trim}_lr{lr}_minlr{min_lr}_delta{delta_min}-{delta_max}-{delta_epoch}_regime-{delta_regime}_f32act-{f32_act}_fullfc-{full_fc}_wd-{weight_decay}_SincOutCh_{sinc_out_channels}_SincKern_{sinc_kernel_size}_SincStride_{sinc_stride}_{date}.pth"
+
+
+# -----------------------------------------------------------------------------------------------
+# PATH DEI FILE
+
+# Questi immagino li toglieremo
+
+# -----------------------------------------------------------------------------------------------
+
+# ASVSPOOF2019 LA
+# dataset_name: 'ASVSPOOF19'
+data_dir: '/nas/public/dataset/asvspoof2019/LA' # Data directory
+path_df_train: 'ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt'
+path_df_dev: 'ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt'
+path_df_eval: 'ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt'
+
+path_files_train: 'ASVspoof2019_LA_train/flac'
+path_files_dev: 'ASVspoof2019_LA_dev/flac'
+path_files_eval: 'ASVspoof2019_LA_eval/flac'
+
+# ASVSPOOF2021 LA EVAL
+# dataset_name: 'ASVSPOOF21_LA'
+data_dir_asvspoof21_la: '/nas/public/dataset/asvspoof2021'
+path_df_eval_asvspoof21_la: 'LA_cm_eval_labels.txt'
+path_files_eval_asvspoof21_la: 'ASVspoof2021_LA_eval/flac'
+
+
+# ASVSPOOF2021 DF EVAL
+# dataset_name: 'ASVSPOOF21_DF'
+data_dir_asvspoof21_df: '/nas/public/dataset/asvspoof2021'
+path_df_eval_asvspoof21_df: 'DF_cm_eval_labels.txt'
+path_files_eval_asvspoof21_df: 'ASVspoof2021_DF_eval/flac'
+
+
+model_folder:   "/nas/home/mbenzo/tesi/codice_paper/TNN_LCNN_model"
+results_folder: "/nas/home/mbenzo/tesi/codice_paper/TNN_LCNN_results"
+log_folder:     "/nas/home/mbenzo/tesi/codice_paper/TNN_LCNN_log"
+
+# -----------------------------------------------------------------------------------------------
+#model-related
+model:
+
+  win_len: 4 #  in seconds
+  fs: 8000 #16000 # Sampling frequency
+
+  weight_decay: 0
+
+  # Parameters mel-spec
+  spect_nfft: 512
+  spect_win_length: 400
+  spect_hop_length: 160
+  spect_fmin: 20
+  # spect_fmax: 4000 # hardcoded in the script
+  spect_n_mels: 80
+
+  # Parameters Sinc Conv
+  sinc_out_channels: 70
+  sinc_kernel_size: 128
+  sinc_stride: 1
+
+  # TERNARY NETWORK PARAMETERS
+  # Delta is the threshold for the ternarization
+  # delta = 0.2 means that every weight w such that -0.2*w_max < w < 0.2*w_max is set to 0
+  delta_regime_type: 'sqrt' # Possible values: const, linear, sqrt, square, log
+  delta_regime_min: 0
+  delta_regime_max: 0.7
+  delta_regime_max_epoch: 50
+
+  # Input quantization
+  f32_activations: True
+
+  # FC quantization
+  full_fc: False # True: layer fc NOT quantized; False: layer fc quantized
