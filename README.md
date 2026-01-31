@@ -20,7 +20,7 @@ $$
 
 Following [1], the threshold $\Delta$ to which the parameters are quantized evolves during training, starting form an initial value and increasing until a maximum, after which it becomes constant. Five possible regime choices were explored: Constant, Square, Linear, Square root and Log.
 
-<br><img src="Images/delta_growth_regimes.png" style="width: 100%;"><br>
+<br><img src="Images/delta_growth_regimes.png" style="width: 70%;"><br>
 
 The Straight-through-Estimator (STE) technique was employed in order to perform quantization during training.
 
