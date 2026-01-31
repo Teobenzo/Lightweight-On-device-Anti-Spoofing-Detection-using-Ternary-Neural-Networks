@@ -69,7 +69,7 @@ Computational costs comparison:
 
 Parameter's file size comparison:
 
-<br><img src="Results/comparison_model_size_rawtfnet16_tnn_thesis.png" style="width: 100%;"><br>
+<br><img src="Results/comparison_model_size_rawtfnet16_tnn_thesis.png" style="width: 80%;"><br>
 
 
 # Bibliography
