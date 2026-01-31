@@ -6,6 +6,7 @@ The purpose of this project was to design a speech deepfake detector using terna
 ## Model and Ternary Quantization
 In order to achieve our goal a Light CNN (LCNN) - an already well-established architecture for anti-spoofing detection in Automatic Speaker Verification systems - was trained on the ASVSpoof2019 LA dataset, quantizing all the its weights and biases to three values: 0, +1 and -1.
 This causes any operation involving these parameters to either be a pass-through (+1 multiplications) or a flip-sign (-1 multiplications), or to have no contribution to the final result at all (0 multiplication) and can therefore be skipped.
+A copy of the original non-quantized weights is retained and restored before each update, ensuring that the optimization step is applied to the non-quantized parameters and the network is trained correctly.
 
 $$
 \begin{equation}
@@ -18,9 +19,11 @@ $$
 \end{equation}
 $$
 
-Following [1], the threshold $\Delta$ to which the parameters are quantized evolves during training, starting form an initial value and increasing until a maximum, after which it becomes constant. Five possible regime choices were explored: Constant, Square, Linear, Square root and Log.
+Following [1], the threshold $\Delta$ to which the parameters are quantized evolves during training, starting form an initial value and increasing until a maximum, after which it becomes constant. 
+For example, $\Delta = 0.7$ means that all the weights below the $70%$ of the maximum absolute value of the weights in a layer are zeroed.
+Five possible regime choices were explored: Constant, Square, Linear, Square root and Log.
 
-<br><img src="Images/delta_growth_regimes.png" style="width: 70%;"><br>
+<br><img src="Images/delta_growth_regimes.png" style="width: 60%;"><br>
 
 The Straight-through-Estimator (STE) technique was employed in order to perform quantization during training.
 
@@ -62,11 +65,11 @@ Robustness results:
 
 Computational costs comparison:
 
-<br><img src="Results/macs_comparison_TNN_LCNN_sqrt_vs_rawTFnet16.ppg" style="width: 100%;"><br>
+<br><img src="Results/macs_comparison_TNN_LCNN_sqrt_vs_rawTFnet16.png" style="width: 100%;"><br>
 
 Parameter's file size comparison:
 
-<br><img src="Results/comparison_model_size_rawtfnet16_tnn_thesis.ppg" style="width: 100%;"><br>
+<br><img src="Results/comparison_model_size_rawtfnet16_tnn_thesis.png" style="width: 100%;"><br>
 
 
 # Bibliography
